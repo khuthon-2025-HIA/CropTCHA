@@ -3,13 +3,18 @@ import { createEffect, createSignal, For, onMount, Show } from 'solid-js';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 import ZoomIn from 'lucide-solid/icons/zoom-in';
 import ZoomOut from 'lucide-solid/icons/zoom-out';
-import ScanSearch from 'lucide-solid/icons/scan-search';
 import Volume2 from 'lucide-solid/icons/volume-2';
+import CirclePlus from 'lucide-solid/icons/circle-plus';
+import ScanSearch from 'lucide-solid/icons/scan-search';
+import CircleMinus from 'lucide-solid/icons/circle-minus';
 
+import { Card } from '@/ui/Card';
 import { Text } from '@/ui/common/Text';
+import { Item } from '@/ui/common/Item';
 import { Icon } from '@/ui/common/Icon';
 import { Button } from '@/ui/common/Button';
 import { Tooltip } from '@/ui/common/Tooltip';
+import { createClickAway, Popover } from '@/ui/common/Popover';
 
 import { vars } from '@/feature/theme';
 import { Device } from '@/feature/model/device';
@@ -23,7 +28,7 @@ import {
   cameraY, itemStyle, dotStyle,
   itemX,
   itemY, editablePolygonStyle, fabContainerStyle,
-  fabStyle, sourceStyle, sourceEditStyle, worldStyle, scaleVar,
+  fabStyle, sourceStyle, sourceEditStyle, worldStyle, scaleVar, shapeStyle,
 } from './Surface.css';
 
 type EditData = {
@@ -131,6 +136,27 @@ export const Surface = (props: SurfaceProps) => {
   const shapes = () => props.mode === 'edit' ? editShape() : props.shape;
   const sources = () => props.mode === 'edit' ? editSource() : props.source;
 
+  const getRect = (shape: Shape) => {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    shape.forEach(([x, y]) => {
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    });
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  };
+
   const zoom = (factor: number) => {
     const mainContainer = containerRef();
     if (!mainContainer) return;
@@ -177,6 +203,31 @@ export const Surface = (props: SurfaceProps) => {
 
     setCoord([camXNew, camYNew]);
     setScale(scaleNew);
+  };
+
+  const addPoint = (shapeIdx: number) => {
+    const newShapes = editShape().map(s => s.map(p => [...p] as Point));
+    const targetShape = newShapes[shapeIdx];
+    if (!targetShape || targetShape.length < 2) return;
+
+    const p1 = targetShape[targetShape.length - 2];
+    const p2 = targetShape[targetShape.length - 1];
+    const midPoint: Point = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+    targetShape.splice(targetShape.length - 1, 0, midPoint);
+
+    setEditShape(newShapes);
+    props.onShapeChange?.(newShapes);
+  };
+
+  const removePoint = (shapeIdx: number) => {
+    const newShapes = editShape().map(s => s.map(p => [...p] as Point));
+    const targetShape = newShapes[shapeIdx];
+    if (!targetShape || targetShape.length <= 3) return;
+
+    targetShape.pop();
+
+    setEditShape(newShapes);
+    props.onShapeChange?.(newShapes);
   };
 
   onMount(() => {
@@ -227,27 +278,80 @@ export const Surface = (props: SurfaceProps) => {
       onWheel={handleWheel}
     >
       <div class={worldStyle}>
-        <svg class={svgStyle}>
-          <For each={shapes()}>
-            {(_, shapeIndex) => (
-              <polygon
-                points={shapes()[shapeIndex()].map(point => point.join(',')).join(' ')}
-                fill={'transparent'}
-                stroke={vars.role.text.default}
-                stroke-width={vars.line.bold}
-                classList={{
-                  [itemStyle]: true,
-                  [editablePolygonStyle]: props.mode === 'edit',
-                }}
-                onPointerDown={() => {
-                  setEditData({
-                    shapeIndex: shapeIndex(),
-                  });
-                }}
-              />
-            )}
-          </For>
-        </svg>
+        <For each={shapes()}>
+          {(_, shapeIndex) => {
+            const [open, setOpen] = createSignal(false);
+            const track = createClickAway(() => setOpen(false));
+
+            const rect = () => getRect(shapes()[shapeIndex()]);
+
+            return (
+              <Popover
+                open={open()}
+                element={
+                  <Item.Group
+                    ref={track}
+                    w={'20rem'}
+                    as={Card}
+                    shadow={'md'}
+                  >
+                    <Item
+                      rightIcon={CirclePlus}
+                      name={'꼭지점 추가'}
+                      onClick={() => {
+                        addPoint(shapeIndex());
+                      }}
+                    />
+                    <Item
+                      disabled={shapes()[shapeIndex()].length <= 3}
+                      rightIcon={CircleMinus}
+                      name={'꼭지점 삭제'}
+                      onClick={() => {
+                        removePoint(shapeIndex());
+                      }}
+                    />
+                  </Item.Group>}
+              >
+
+                <div
+                  classList={{
+                    [itemStyle]: true,
+                    [shapeStyle]: true,
+                  }}
+                  style={assignInlineVars({
+                    [itemX]: `${rect().x}px`,
+                    [itemY]: `${rect().y}px`,
+                  })}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    setOpen((prev) => !prev);
+                  }}
+                >
+                  <svg
+                    width={rect().width}
+                    height={rect().height}
+                    class={svgStyle}
+                  >
+                    <polygon
+                      points={shapes()[shapeIndex()].map((point) => `${point[0] - rect().x},${point[1] - rect().y}`).join(' ')}
+                      fill={'transparent'}
+                      stroke={vars.role.text.default}
+                      stroke-width={vars.line.bold}
+                      classList={{
+                        [editablePolygonStyle]: props.mode === 'edit',
+                      }}
+                      onPointerDown={() => {
+                        setEditData({
+                          shapeIndex: shapeIndex(),
+                        });
+                      }}
+                    />
+                  </svg>
+                </div>
+              </Popover>
+            );
+          }}
+        </For>
         <For each={sources()}>
           {({ point, source }, sourceIndex) => (
             <Tooltip label={source.label}>

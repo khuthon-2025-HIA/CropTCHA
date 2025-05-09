@@ -27,14 +27,6 @@ export const worldStyle = style({
   scale: scaleVar,
 });
 
-export const svgStyle = style({
-  width: '100%',
-  height: '100%',
-
-  touchAction: 'none',
-  userSelect: 'none',
-});
-
 export const itemStyle = style({
   translate: `${cameraX} ${cameraY}`,
   transformOrigin: '50% 50%',
@@ -42,6 +34,21 @@ export const itemStyle = style({
   userSelect: 'none',
   touchAction: 'none',
 });
+
+export const shapeStyle = style({
+  position: 'absolute',
+  top: `${itemY}`,
+  left: `${itemX}`,
+
+});
+
+export const svgStyle = style({
+  width: '100%',
+  height: '100%',
+
+  overflow: 'visible',
+});
+
 
 export const editablePolygonStyle = style({
   cursor: 'pointer',
