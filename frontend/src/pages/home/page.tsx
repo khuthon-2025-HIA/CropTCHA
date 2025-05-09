@@ -1,10 +1,11 @@
-import { createSignal } from 'solid-js';
-import Volume2 from 'lucide-solid/icons/volume-2';
-import Maximize2 from 'lucide-solid/icons/maximize-2';
-import LandPlot from 'lucide-solid/icons/land-plot';
-import Grid2x2Plus from 'lucide-solid/icons/grid-2x2-plus';
-import Grid2x2X from 'lucide-solid/icons/grid-2x2-x';
+import { createSignal, For } from 'solid-js';
+import Mic from 'lucide-solid/icons/mic';
 import EyeOff from 'lucide-solid/icons/eye-off';
+import LandPlot from 'lucide-solid/icons/land-plot';
+import Grid2x2X from 'lucide-solid/icons/grid-2x2-x';
+import Maximize2 from 'lucide-solid/icons/maximize-2';
+import Grid2x2Plus from 'lucide-solid/icons/grid-2x2-plus';
+import ChevronRight from 'lucide-solid/icons/chevron-right';
 
 import { Card } from '@/ui/Card';
 import { Box } from '@/ui/common/Box';
@@ -15,15 +16,22 @@ import { Button } from '@/ui/common/Button';
 import { Tooltip } from '@/ui/common/Tooltip';
 
 import { stagger } from '@/feature/theme';
+import { events } from '@/feature/store/event';
+import { devices } from '@/feature/store/device';
 
 import { Surface } from './component/Surface';
+import { EventItem } from './component/EventItem';
 
 import {
   buttonAnimation,
   containerStyle,
+  deviceContainerStyle,
+  deviceStyle,
   mainSectionStyle,
   mainSectionToolbarStyle,
   sideSectionStyle,
+  toolbarButtonStyle,
+  toolbarStyle,
 } from './page.css';
 
 export const HomePage = () => {
@@ -120,28 +128,58 @@ export const HomePage = () => {
         }}
       >
         <Item.Group as={Card} style={{ flex: 1 }}>
-          <Text variant={'caption'} p={'sm'}>
-            발생한 이벤트
-          </Text>
-          <Item
-            leftIcon={Volume2}
-            name={'대충 뭔가 감지'}
-            description={'센서 1에서 발생함'}
-          />
-          <Item
-            leftIcon={Volume2}
-            name={'대충 뭔가 감지'}
-            description={'센서 2에서 발생함'}
-          />
+          <Box class={toolbarStyle} p={'sm'}>
+            <Text variant={'caption'}>발생한 이벤트</Text>
+            <Button variant={'text'} class={toolbarButtonStyle}>
+              <Text variant={'caption'}>
+                전체보기
+              </Text>
+              <Icon icon={ChevronRight} c={'text.caption'} size={12}/>
+            </Button>
+          </Box>
+          <For each={events.list}>
+            {(event) => (
+              <EventItem
+                {...event}
+              />
+            )}
+          </For>
         </Item.Group>
         <Card>
-          <Text variant={'caption'}>연결된 센서</Text>
-          <Box align={'center'} gap={'xs'} p={'xl'}>
-            <Icon icon={EyeOff} size={24} c={'text.caption'}/>
-            <Text variant={'caption'} ta={'center'}>
-              연결된 센서 없음
-            </Text>
-          </Box>
+          <div class={toolbarStyle}>
+            <Text variant={'caption'}>연결된 센서</Text>
+            <Button variant={'text'} class={toolbarButtonStyle}>
+              <Text variant={'caption'}>
+                전체보기
+              </Text>
+              <Icon icon={ChevronRight} c={'text.caption'} size={12}/>
+            </Button>
+          </div>
+          <div class={deviceContainerStyle}>
+            <For
+              each={devices.list}
+              fallback={
+                <Box align={'center'} gap={'xs'}>
+                  <Icon icon={EyeOff} size={24} c={'text.caption'}/>
+                  <Text variant={'caption'} ta={'center'}>
+                    연결된 센서 없음
+                  </Text>
+                </Box>
+              }
+            >
+              {(device) => (
+                <Tooltip label={device.label}>
+                  <Box
+                    c={'primary.default'}
+                    bg={'primary.container'}
+                    class={deviceStyle}
+                  >
+                    <Icon icon={Mic}/>
+                  </Box>
+                </Tooltip>
+              )}
+            </For>
+          </div>
         </Card>
       </section>
     </div>

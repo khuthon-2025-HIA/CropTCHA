@@ -10,7 +10,7 @@ export const Layout = (props: LayoutProps) => {
     <div class={containerStyle}>
       <header class={headerStyle}>
         <Text variant={'title'}>
-          Header
+          CropTCHA
         </Text>
       </header>
       <section role={'main'} class={layoutStyle}>

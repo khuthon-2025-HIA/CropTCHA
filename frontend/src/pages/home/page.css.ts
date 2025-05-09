@@ -58,3 +58,27 @@ export const sideSectionStyle = style({
 
   flexShrink: 0,
 });
+
+export const toolbarStyle = style({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: vars.space.xs,
+});
+export const toolbarButtonStyle = style({
+  padding: `${vars.space.xxs} ${vars.space.xs}`,
+  borderRadius: vars.space.xs,
+});
+
+export const deviceContainerStyle = style({
+  paddingTop: vars.space.md,
+});
+
+export const deviceStyle = style({
+  width: '4.2rem',
+  height: '4.2rem',
+  borderRadius: '50%',
+
+  padding: vars.space.md,
+});
