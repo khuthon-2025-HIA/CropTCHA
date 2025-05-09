@@ -1,6 +1,11 @@
 import { join } from 'node:path';
 import * as process from 'node:process';
 
-export const base = (params: TemplateStringsArray) => {
-  return join(process.cwd(), '/data/', params.join('').trim());
+export const base = (str: TemplateStringsArray, ...args: unknown[]) => {
+  const result = str.reduce(
+    (prev, curr, i) => prev + curr + (args[i] ?? ''),
+    '',
+  );
+
+  return join(process.cwd(), '/data/', result.trim());
 };

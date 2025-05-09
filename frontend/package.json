@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "4.6.2",
     "@floating-ui/dom": "1.6.13",
     "@solid-primitives/media": "2.3.0",
     "@solidjs/router": "0.15.3",

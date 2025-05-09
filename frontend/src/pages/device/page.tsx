@@ -1,5 +1,6 @@
-import { createSignal, For, getOwner, onCleanup, onMount, runWithOwner } from 'solid-js';
+import { createResource, createSignal, For, getOwner, onCleanup, onMount, runWithOwner } from 'solid-js';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
+import { load } from '@fingerprintjs/fingerprintjs';
 import Mic from 'lucide-solid/icons/mic';
 import CloudOff from 'lucide-solid/icons/cloud-off';
 
@@ -18,6 +19,7 @@ import {
 } from './page.css';
 import { createRef } from '@/feature/hook/createRef';
 import gsap from 'gsap';
+import { createRecordMutation } from '@/feature/api/event';
 
 const SIZE = 128;
 export const DevicePage = () => {
@@ -27,6 +29,11 @@ export const DevicePage = () => {
 
   const [volumeData, setVolumeData] = createSignal<number[]>([]);
   const [error, setError] = createSignal<Error | null>(null);
+
+  const { mutate } = createRecordMutation();
+  const [agent] = createResource(() => load());
+  const [agentData] = createResource(agent, (agent) => agent.get());
+  const id = () => agentData()?.visitorId;
 
   const startRecord = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }).catch((err: Error) => err);
@@ -42,6 +49,17 @@ export const DevicePage = () => {
     const sourceNode = context.createMediaStreamSource(stream);
     sourceNode.connect(analyser, 0);
     const pcmData = new Float32Array(analyser.fftSize / 2);
+
+    const recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = (event) => {
+      if (event.data && event.data.size > 0) {
+        const myId = id();
+        if (myId) {
+          mutate(myId, new Date(), event.data);
+        }
+      }
+    };
+    recorder.start(5000);
 
     let stop = false;
     const startVisualizer = (callback: (volume: Float32Array<ArrayBuffer>) => void) => {
@@ -59,6 +77,7 @@ export const DevicePage = () => {
       stop = true;
       stream.getTracks().forEach((track) => track.stop());
       context.close();
+      recorder.stop();
       setVolumeData([]);
     };
 
