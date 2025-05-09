@@ -4,8 +4,10 @@ import Maximize2 from 'lucide-solid/icons/maximize-2';
 import LandPlot from 'lucide-solid/icons/land-plot';
 import Grid2x2Plus from 'lucide-solid/icons/grid-2x2-plus';
 import Grid2x2X from 'lucide-solid/icons/grid-2x2-x';
+import EyeOff from 'lucide-solid/icons/eye-off';
 
 import { Card } from '@/ui/Card';
+import { Box } from '@/ui/common/Box';
 import { Icon } from '@/ui/common/Icon';
 import { Item } from '@/ui/common/Item';
 import { Text } from '@/ui/common/Text';
@@ -13,6 +15,8 @@ import { Button } from '@/ui/common/Button';
 import { Tooltip } from '@/ui/common/Tooltip';
 
 import { stagger } from '@/feature/theme';
+
+import { Surface } from './component/Surface';
 
 import {
   buttonAnimation,
@@ -25,6 +29,30 @@ import {
 export const HomePage = () => {
   const [mode, setMode] = createSignal<'view' | 'edit'>('view');
 
+  const [shape, setShape] = createSignal<[number, number][][]>([
+    [
+      [10, 10],
+      [30, 100],
+      [100, 100],
+      [100, 30],
+    ],
+  ]);
+
+  const onAddShape = () => {
+    setShape([
+      ...shape(),
+      [
+        [50, 50],
+        [50, 150],
+        [150, 150],
+        [150, 50],
+      ],
+    ]);
+  };
+  const onRemoveShape = () => {
+    setShape(shape().slice(0, -1));
+  };
+
   const onCollapse = () => {
 
   };
@@ -35,13 +63,15 @@ export const HomePage = () => {
         <div class={mainSectionToolbarStyle}>
           <Tooltip label={'편집모드'}>
             <Button
-              variant={'icon'}
+              variant={'text'}
               active={mode() === 'edit'}
               onClick={() => {
                 setMode(mode() === 'edit' ? 'view' : 'edit');
               }}
+              gap={'xs'}
             >
               <Icon icon={LandPlot}/>
+              편집모드
             </Button>
           </Tooltip>
           <Tooltip label={'공간 추가하기'}>
@@ -52,6 +82,7 @@ export const HomePage = () => {
                 [buttonAnimation.exit]: mode() !== 'edit',
               }}
               style={stagger(0)}
+              onClick={onAddShape}
             >
               <Icon icon={Grid2x2Plus}/>
             </Button>
@@ -64,6 +95,7 @@ export const HomePage = () => {
                 [buttonAnimation.exit]: mode() !== 'edit',
               }}
               style={stagger(1)}
+              onClick={onRemoveShape}
             >
               <Icon icon={Grid2x2X}/>
             </Button>
@@ -75,9 +107,11 @@ export const HomePage = () => {
             </Button>
           </Tooltip>
         </div>
-        <Card m={'lg'}>
-          test
-        </Card>
+        <Surface
+          mode={mode()}
+          shape={shape()}
+          onShapeChange={setShape}
+        />
       </section>
       <section
         classList={{
@@ -100,6 +134,15 @@ export const HomePage = () => {
             description={'센서 2에서 발생함'}
           />
         </Item.Group>
+        <Card>
+          <Text variant={'caption'}>연결된 센서</Text>
+          <Box align={'center'} gap={'xs'} p={'xl'}>
+            <Icon icon={EyeOff} size={24} c={'text.caption'}/>
+            <Text variant={'caption'} ta={'center'}>
+              연결된 센서 없음
+            </Text>
+          </Box>
+        </Card>
       </section>
     </div>
   );

@@ -66,6 +66,7 @@ export const buttonStyle = styleVariants({
     }
   }],
   icon: [baseButtonStyle, {
+    color: vars.role.surface.text,
     backgroundColor: 'transparent',
     padding: vars.space.sm,
     borderRadius: vars.space.sm,

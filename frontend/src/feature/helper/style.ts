@@ -34,3 +34,14 @@ export const sx = <Element extends HTMLElement>(
 
   return result.map((it) => it[it.length - 1] === ';' ? it.trim() : `${it.trim()};`).join('\n');
 };
+
+const getVarName = (variable: string) => {
+  if (variable.startsWith('--')) return variable;
+  if (variable.startsWith('var(')) return variable.replace(/var\((.*)\)/, '$1');
+
+  return variable;
+}
+export const resolveVar = (variable: string) => {
+  const name = getVarName(variable)
+  return getComputedStyle(document.querySelector(`#root`)!).getPropertyValue(name);
+};

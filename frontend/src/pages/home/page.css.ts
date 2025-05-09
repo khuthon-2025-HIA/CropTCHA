@@ -20,6 +20,11 @@ export const mainSectionStyle = style({
   borderColor: vars.role.surface.highest,
   borderWidth: vars.line.md,
   borderRadius: vars.space.sm,
+
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  alignItems: 'stretch',
 });
 
 export const mainSectionToolbarStyle = style({
@@ -49,6 +54,7 @@ export const sideSectionStyle = style({
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'stretch',
+  gap: vars.space.md,
 
   flexShrink: 0,
 });
