@@ -1,6 +1,6 @@
 export type Device = {
   id: string;
-  type: 'mic';
+  type: string;
   label?: string;
   color?: string;
 };

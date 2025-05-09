@@ -14,6 +14,13 @@ export default defineConfig({
       'dev1.suyong.me',
       'dev2.suyong.me',
     ],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, ''),
+      }
+    }
   },
   resolve: {
     alias: [

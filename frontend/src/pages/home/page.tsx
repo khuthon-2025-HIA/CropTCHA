@@ -1,4 +1,4 @@
-import { createSignal, For, onMount } from 'solid-js';
+import { createEffect, createSignal, For, onMount } from 'solid-js';
 import Mic from 'lucide-solid/icons/mic';
 import EyeOff from 'lucide-solid/icons/eye-off';
 import LandPlot from 'lucide-solid/icons/land-plot';
@@ -37,6 +37,7 @@ import gsap from 'gsap';
 import BellPlus from 'lucide-solid/icons/bell-plus';
 import { Dialog } from '@/ui/Dialog';
 import { Device } from '@/feature/model/device';
+import { createShape, createShapeMutation } from '@/feature/api/shape';
 
 export const HomePage = () => {
   const [section1, setSection1] = createRef();
@@ -46,14 +47,9 @@ export const HomePage = () => {
   const [mode, setMode] = createSignal<'view' | 'edit'>('view');
   const [deviceAddOpen, setDeviceAddOpen] = createSignal(false);
 
-  const [shape, setShape] = createSignal<[number, number][][]>([
-    [
-      [50, 50],
-      [50, 150],
-      [150, 150],
-      [150, 50],
-    ],
-  ]);
+  const [initShape] = createShape();
+  const { mutate } = createShapeMutation();
+  const [shape, setShape] = createSignal<[number, number][][]>([]);
   const [source, setSource] = createSignal<SourcePoint[]>([]);
 
   const onAddShape = () => {
@@ -103,6 +99,19 @@ export const HomePage = () => {
       ease: 'power4.out',
     }, '-=0.5');
   });
+
+  createEffect(() => {
+    setShape(initShape()?.shapes ?? []);
+    setSource(initShape()?.sources ?? []);
+  });
+
+  createEffect(() => {
+    if (initShape.state === 'pending') return;
+
+    mutate(shape(), source()).then(() => {
+      console.log('shape updated');
+    })
+  })
 
   return (
     <div class={containerStyle}>
