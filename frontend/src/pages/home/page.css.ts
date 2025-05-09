@@ -28,6 +28,9 @@ export const mainSectionStyle = style({
 });
 
 export const mainSectionToolbarStyle = style({
+  position: 'absolute',
+  width: '100%',
+
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
@@ -35,9 +38,7 @@ export const mainSectionToolbarStyle = style({
   gap: vars.space.xs,
   padding: vars.space.xs,
 
-  borderBottomStyle: 'solid',
-  borderBottomWidth: vars.line.md,
-  borderBottomColor: vars.role.surface.highest,
+  zIndex: 10,
 });
 
 export const buttonAnimation = animation({

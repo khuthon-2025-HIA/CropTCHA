@@ -35,6 +35,9 @@ import {
 } from './page.css';
 import { createRef } from '@/feature/hook/createRef';
 import gsap from 'gsap';
+import BellPlus from 'lucide-solid/icons/bell-plus';
+import { Dialog } from '@/ui/Dialog';
+import { Device } from '@/feature/model/device';
 
 export const HomePage = () => {
   const [section1, setSection1] = createRef();
@@ -42,6 +45,7 @@ export const HomePage = () => {
   const [section3, setSection3] = createRef();
 
   const [mode, setMode] = createSignal<'view' | 'edit'>('view');
+  const [deviceAddOpen, setDeviceAddOpen] = createSignal(false);
 
   const [shape, setShape] = createSignal<[number, number][][]>([
     [
@@ -51,16 +55,7 @@ export const HomePage = () => {
       [150, 50],
     ],
   ]);
-  const [source, setSource] = createSignal<SourcePoint[]>([
-    {
-      point: [50, 50],
-      source: {
-        id: '1',
-        type: 'mic',
-        label: '마이크 1',
-      },
-    }
-  ])
+  const [source, setSource] = createSignal<SourcePoint[]>([]);
 
   const onAddShape = () => {
     setShape([
@@ -75,6 +70,17 @@ export const HomePage = () => {
   };
   const onRemoveShape = () => {
     setShape(shape().slice(0, -1));
+  };
+
+  const onAddSource = (device: Device) => {
+    setSource([
+      ...source(),
+      {
+        point: [50, 50],
+        source: device,
+      },
+    ]);
+    setDeviceAddOpen(false);
   };
 
   const onCollapse = () => {
@@ -105,6 +111,50 @@ export const HomePage = () => {
 
   return (
     <div class={containerStyle}>
+      <Dialog
+        title={'추가할 센서를 선택하세요'}
+        open={deviceAddOpen()}
+        onClose={() => setDeviceAddOpen(false)}
+        footer={
+          <Button
+            variant={'text'}
+            onClick={() => setDeviceAddOpen(false)}
+          >
+            닫기
+          </Button>
+        }
+      >
+        <For
+          each={devices.list}
+          fallback={
+            <Box align={'center'} gap={'xs'}>
+              <Icon icon={EyeOff} size={24} c={'text.caption'}/>
+              <Text variant={'caption'} ta={'center'}>
+                연결된 센서 없음
+              </Text>
+            </Box>
+          }
+        >
+          {(device) => {
+            const disabled = () => source().some((it) => it.source.id === device.id);
+
+            return (
+              <Tooltip label={disabled() ? `"${device.label}"(이)가 이미 추가됨` : device.label}>
+                <Box
+                  disabled={disabled()}
+                  as={'button'}
+                  c={disabled() ? 'text.caption' : 'primary.default'}
+                  bg={disabled() ? 'surface.high' : 'primary.container'}
+                  class={deviceStyle}
+                  onClick={() => onAddSource(device)}
+                >
+                  <Icon icon={Mic}/>
+                </Box>
+              </Tooltip>
+            );
+          }}
+        </For>
+      </Dialog>
       <section ref={setSection1} class={mainSectionStyle}>
         <div class={mainSectionToolbarStyle}>
           <Tooltip label={'편집모드'}>
@@ -144,6 +194,19 @@ export const HomePage = () => {
               onClick={onRemoveShape}
             >
               <Icon icon={Grid2x2X}/>
+            </Button>
+          </Tooltip>
+          <Tooltip label={'센서 추가하기'}>
+            <Button
+              variant={'icon'}
+              classList={{
+                [buttonAnimation.enter]: mode() === 'edit',
+                [buttonAnimation.exit]: mode() !== 'edit',
+              }}
+              style={stagger(2)}
+              onClick={() => setDeviceAddOpen(true)}
+            >
+              <Icon icon={BellPlus}/>
             </Button>
           </Tooltip>
           <div style={{ flex: 1 }}/>

@@ -206,7 +206,7 @@ export const Surface = (props: SurfaceProps) => {
   };
 
   const addPoint = (shapeIdx: number) => {
-    const newShapes = editShape().map(s => s.map(p => [...p] as Point));
+    const newShapes = editShape().map((s) => s.map(p => [...p] as Point));
     const targetShape = newShapes[shapeIdx];
     if (!targetShape || targetShape.length < 2) return;
 
@@ -220,7 +220,7 @@ export const Surface = (props: SurfaceProps) => {
   };
 
   const removePoint = (shapeIdx: number) => {
-    const newShapes = editShape().map(s => s.map(p => [...p] as Point));
+    const newShapes = editShape().map((s) => s.map(p => [...p] as Point));
     const targetShape = newShapes[shapeIdx];
     if (!targetShape || targetShape.length <= 3) return;
 
@@ -228,6 +228,13 @@ export const Surface = (props: SurfaceProps) => {
 
     setEditShape(newShapes);
     props.onShapeChange?.(newShapes);
+  };
+
+  const removeSource = (sourceIdx: number) => {
+    const newSource = editSource().filter((_, index) => index !== sourceIdx);
+
+    setEditSource(newSource);
+    props.onSourceChange?.(newSource);
   };
 
   onMount(() => {
@@ -312,7 +319,6 @@ export const Surface = (props: SurfaceProps) => {
                     />
                   </Item.Group>}
               >
-
                 <div
                   classList={{
                     [itemStyle]: true,
@@ -353,26 +359,54 @@ export const Surface = (props: SurfaceProps) => {
           }}
         </For>
         <For each={sources()}>
-          {({ point, source }, sourceIndex) => (
-            <Tooltip label={source.label}>
-              <div
-                classList={{
-                  [itemStyle]: true,
-                  [sourceStyle]: true,
-                  [sourceEditStyle]: props.mode === 'edit',
-                }}
-                style={assignInlineVars({
-                  [itemX]: `${point[0]}px`,
-                  [itemY]: `${point[1]}px`,
-                })}
-                onPointerDown={() => {
-                  setEditData({ sourceIndex: sourceIndex() });
-                }}
-              >
-                <Icon icon={Volume2}/>
-              </div>
-            </Tooltip>
-          )}
+          {({ point, source }, sourceIndex) => {
+            const [open, setOpen] = createSignal(false);
+            const track = createClickAway(() => setOpen(false));
+
+            return (
+              <Tooltip label={source.label}>
+                <Popover
+                  open={open()}
+                  offset={4}
+                  element={
+                    <Item.Group
+                      ref={track}
+                      w={'20rem'}
+                      as={Card}
+                      shadow={'md'}
+                    >
+                      <Item
+                        rightIcon={CircleMinus}
+                        name={'기기 삭제'}
+                        onClick={() => removeSource(sourceIndex())}
+                      />
+                    </Item.Group>
+                  }
+                >
+                  <div
+                    classList={{
+                      [itemStyle]: true,
+                      [sourceStyle]: true,
+                      [sourceEditStyle]: props.mode === 'edit',
+                    }}
+                    style={assignInlineVars({
+                      [itemX]: `${point[0]}px`,
+                      [itemY]: `${point[1]}px`,
+                    })}
+                    onPointerDown={() => {
+                      setEditData({ sourceIndex: sourceIndex() });
+                    }}
+                    onContextMenu={(event) => {
+                      event.preventDefault();
+                      setOpen((prev) => !prev);
+                    }}
+                  >
+                    <Icon icon={Volume2}/>
+                  </div>
+                </Popover>
+              </Tooltip>
+            );
+          }}
         </For>
         <Show when={props.mode === 'edit'}>
           <For each={shapes()}>
