@@ -26,11 +26,13 @@ export const DevicePage = () => {
   const [ref3, setRef3] = createRef();
 
   const [volumeData, setVolumeData] = createSignal<number[]>([]);
+  const [error, setError] = createSignal<Error | null>(null);
 
   const startRecord = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }).catch((err: Error) => err);
     if (stream instanceof Error) {
       console.error(stream);
+      setError(stream);
       return null;
     }
 
@@ -151,6 +153,7 @@ export const DevicePage = () => {
         <Icon icon={Mic} />
         마이크 연결
       </Button>
+      {error()?.toString()}
     </div>
   );
 };

@@ -28,14 +28,15 @@ export const buttonStyle = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-
   gap: vars.space.xs,
+
   padding: vars.space.md,
   borderRadius: '50%',
   backgroundColor: vars.role.surface.default,
   borderStyle: 'solid',
   borderWidth: vars.line.md,
   borderColor: vars.role.surface.highest,
+  color: vars.role.surface.text,
   cursor: 'pointer',
 
   ':hover': {

@@ -9,6 +9,12 @@ export default defineConfig({
     solid(),
     vanillaExtractPlugin(),
   ],
+  server: {
+    allowedHosts: [
+      'dev1.suyong.me',
+      'dev2.suyong.me',
+    ],
+  },
   resolve: {
     alias: [
       { find: /^@\//, replacement: `${resolve(__dirname, 'src')}/` },
