@@ -3,7 +3,6 @@ import Mic from 'lucide-solid/icons/mic';
 import EyeOff from 'lucide-solid/icons/eye-off';
 import LandPlot from 'lucide-solid/icons/land-plot';
 import Grid2x2X from 'lucide-solid/icons/grid-2x2-x';
-import Maximize2 from 'lucide-solid/icons/maximize-2';
 import Grid2x2Plus from 'lucide-solid/icons/grid-2x2-plus';
 import ChevronRight from 'lucide-solid/icons/chevron-right';
 
@@ -81,10 +80,6 @@ export const HomePage = () => {
       },
     ]);
     setDeviceAddOpen(false);
-  };
-
-  const onCollapse = () => {
-
   };
 
   onMount(() => {
@@ -207,12 +202,6 @@ export const HomePage = () => {
               onClick={() => setDeviceAddOpen(true)}
             >
               <Icon icon={BellPlus}/>
-            </Button>
-          </Tooltip>
-          <div style={{ flex: 1 }}/>
-          <Tooltip label={'크게 보기'}>
-            <Button variant={'icon'} onClick={onCollapse}>
-              <Icon icon={Maximize2}/>
             </Button>
           </Tooltip>
         </div>
