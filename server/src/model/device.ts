@@ -7,3 +7,9 @@ export const DeviceSchema = z.object({
   label: z.string().optional(),
   color: z.string().optional(),
 });
+
+export const DeviceRequestBodySchema = z.object({
+  id: z.string(),
+  label: z.string().optional(),
+  color: z.string().optional(),
+});

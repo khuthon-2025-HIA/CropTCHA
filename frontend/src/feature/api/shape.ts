@@ -2,7 +2,7 @@ import { createResource } from 'solid-js';
 
 import { Shape, ShapeResponseSchema, SourcePoint } from '@/feature/model/shape';
 
-export const createShape = () => createResource(async () => {
+export const createShapeResource = () => createResource(async () => {
   const response = await fetch('/api/shape');
   const json = await response.json();
 

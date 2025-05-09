@@ -16,7 +16,6 @@ import { Tooltip } from '@/ui/common/Tooltip';
 
 import { stagger } from '@/feature/theme';
 import { events } from '@/feature/store/event';
-import { devices } from '@/feature/store/device';
 
 import { SourcePoint, Surface } from './component/Surface';
 import { EventItem } from './component/EventItem';
@@ -37,7 +36,8 @@ import gsap from 'gsap';
 import BellPlus from 'lucide-solid/icons/bell-plus';
 import { Dialog } from '@/ui/Dialog';
 import { Device } from '@/feature/model/device';
-import { createShape, createShapeMutation } from '@/feature/api/shape';
+import { createShapeResource, createShapeMutation } from '@/feature/api/shape';
+import { createDeviceResource } from '@/feature/api/device';
 
 export const HomePage = () => {
   const [section1, setSection1] = createRef();
@@ -47,7 +47,8 @@ export const HomePage = () => {
   const [mode, setMode] = createSignal<'view' | 'edit'>('view');
   const [deviceAddOpen, setDeviceAddOpen] = createSignal(false);
 
-  const [initShape] = createShape();
+  const [initShape] = createShapeResource();
+  const [devices] = createDeviceResource();
   const { mutate } = createShapeMutation();
   const [shape, setShape] = createSignal<[number, number][][]>([]);
   const [source, setSource] = createSignal<SourcePoint[]>([]);
@@ -110,8 +111,8 @@ export const HomePage = () => {
 
     mutate(shape(), source()).then(() => {
       console.log('shape updated');
-    })
-  })
+    });
+  });
 
   return (
     <div class={containerStyle}>
@@ -128,36 +129,38 @@ export const HomePage = () => {
           </Button>
         }
       >
-        <For
-          each={devices.list}
-          fallback={
-            <Box align={'center'} gap={'xs'}>
-              <Icon icon={EyeOff} size={24} c={'text.caption'}/>
-              <Text variant={'caption'} ta={'center'}>
-                연결된 센서 없음
-              </Text>
-            </Box>
-          }
-        >
-          {(device) => {
-            const disabled = () => source().some((it) => it.source.id === device.id);
+        <div class={deviceContainerStyle}>
+          <For
+            each={devices()}
+            fallback={
+              <Box align={'center'} gap={'xs'}>
+                <Icon icon={EyeOff} size={24} c={'text.caption'}/>
+                <Text variant={'caption'} ta={'center'}>
+                  연결된 센서 없음
+                </Text>
+              </Box>
+            }
+          >
+            {(device) => {
+              const disabled = () => source().some((it) => it.source.id === device.id);
 
-            return (
-              <Tooltip label={disabled() ? `"${device.label}"(이)가 이미 추가됨` : device.label}>
-                <Box
-                  disabled={disabled()}
-                  as={'button'}
-                  c={disabled() ? 'text.caption' : 'primary.default'}
-                  bg={disabled() ? 'surface.high' : 'primary.container'}
-                  class={deviceStyle}
-                  onClick={() => onAddSource(device)}
-                >
-                  <Icon icon={Mic}/>
-                </Box>
-              </Tooltip>
-            );
-          }}
-        </For>
+              return (
+                <Tooltip label={disabled() ? `"${device.label}"(이)가 이미 추가됨` : device.label}>
+                  <Box
+                    disabled={disabled()}
+                    as={'button'}
+                    c={disabled() ? 'text.caption' : 'primary.default'}
+                    bg={disabled() ? 'surface.high' : 'primary.container'}
+                    class={deviceStyle}
+                    onClick={() => onAddSource(device)}
+                  >
+                    <Icon icon={Mic}/>
+                  </Box>
+                </Tooltip>
+              );
+            }}
+          </For>
+        </div>
       </Dialog>
       <section ref={setSection1} class={mainSectionStyle}>
         <div class={mainSectionToolbarStyle}>
@@ -258,7 +261,7 @@ export const HomePage = () => {
           </div>
           <div class={deviceContainerStyle}>
             <For
-              each={devices.list}
+              each={devices() ?? []}
               fallback={
                 <Box align={'center'} gap={'xs'}>
                   <Icon icon={EyeOff} size={24} c={'text.caption'}/>

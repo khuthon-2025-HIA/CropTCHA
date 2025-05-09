@@ -79,7 +79,13 @@ export const toolbarButtonStyle = style({
 });
 
 export const deviceContainerStyle = style({
-  paddingTop: vars.space.md,
+  padding: `${vars.space.sm} 0`,
+
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  gap: vars.space.sm,
 });
 
 export const deviceStyle = style({
