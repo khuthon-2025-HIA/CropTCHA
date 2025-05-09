@@ -50,17 +50,29 @@ export const DevicePage = () => {
     sourceNode.connect(analyser, 0);
     const pcmData = new Float32Array(analyser.fftSize / 2);
 
-    const recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = (event) => {
-      if (event.data && event.data.size > 0) {
+    const record = () => {
+      const recorder = new MediaRecorder(stream);
+      const blobs: Blob[] = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          blobs.push(event.data);
+        }
+      };
+      recorder.onstop = () => {
         const myId = id();
         if (myId) {
-          mutate(myId, new Date(), event.data);
+          mutate(myId, new Date(), new Blob(blobs, { type: recorder.mimeType }));
+          record();
         }
-      }
-    };
-    recorder.start(5000);
+      };
 
+      setTimeout(() => {
+        recorder.stop();
+      }, 5000);
+      recorder.start();
+    };
+
+    record();
     let stop = false;
     const startVisualizer = (callback: (volume: Float32Array<ArrayBuffer>) => void) => {
       const onFrame = () => {
@@ -77,7 +89,6 @@ export const DevicePage = () => {
       stop = true;
       stream.getTracks().forEach((track) => track.stop());
       context.close();
-      recorder.stop();
       setVolumeData([]);
     };
 
