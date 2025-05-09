@@ -10,6 +10,8 @@ export const containerStyle = style({
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'stretch',
+
+  backgroundColor: vars.role.surface.default,
 });
 
 export const headerStyle = style({
@@ -27,6 +29,7 @@ export const headerStyle = style({
 
 export const layoutStyle = style({
   width: '100%',
+  maxWidth: '120rem',
 
   display: 'flex',
   flexDirection: 'column',
@@ -34,7 +37,9 @@ export const layoutStyle = style({
   alignItems: 'center',
   flex: 1,
 
-  overflow: 'hidden',
+  padding: vars.space.md,
+  paddingTop: 0,
 
-  backgroundColor: vars.role.surface.default,
+  overflow: 'hidden',
+  alignSelf: 'center',
 });

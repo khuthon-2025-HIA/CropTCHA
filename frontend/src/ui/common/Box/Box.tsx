@@ -51,7 +51,6 @@ export const Box = <T extends ValidComponent = 'div'>(props: BoxProps<T>) => {
     boxSizeStyle,
   );
 
-  console.log(passed.props)
   return (
     <Polymorphic
       {...rest}

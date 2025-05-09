@@ -19,7 +19,7 @@ export const Icon = <T extends ValidComponent>(props: IconProps<T>) => {
     <Box
       {...rest}
       as={local.icon as ValidComponent}
-      c={rest.c ?? 'text.default'}
+      c={rest.c ?? 'inherit'}
       classList={{
         [iconStyle]: true,
         [rest.class ?? '']: !!rest.class,

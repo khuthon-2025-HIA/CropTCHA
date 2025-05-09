@@ -75,3 +75,52 @@ export const buttonStyle = styleVariants({
     }
   }],
 });
+
+export const buttonActiveStyle = styleVariants({
+  default: [baseButtonStyle, {
+    backgroundColor: vars.role.primary.container,
+    color: vars.role.surface.text,
+
+    borderStyle: 'solid',
+    borderWidth: vars.line.md,
+    borderColor: vars.role.primary.containerHighest,
+    borderRadius: vars.space.sm,
+    padding: `${vars.space.sm} ${vars.space.md}`,
+    boxShadow: vars.shadow.xs,
+
+    ':hover': {
+      backgroundColor: vars.role.primary.containerHigh,
+    },
+    ':active': {
+      backgroundColor: vars.role.primary.containerHighest,
+    }
+  }],
+  primary: [baseButtonStyle, {
+    borderRadius: vars.space.sm,
+    padding: `${vars.space.sm} ${vars.space.md}`,
+    boxShadow: vars.shadow.sm,
+
+    backgroundColor: vars.role.primary.default,
+    color: vars.role.primary.text,
+  }],
+  text: [baseButtonStyle, {
+    color: vars.role.primary.default,
+    backgroundColor: vars.role.primary.container,
+    padding: `${vars.space.sm} ${vars.space.md}`,
+    borderRadius: vars.space.sm,
+
+    ':hover': {
+      backgroundColor: vars.role.primary.containerHigh,
+    }
+  }],
+  icon: [baseButtonStyle, {
+    color: vars.role.primary.default,
+    backgroundColor: vars.role.primary.container,
+    padding: vars.space.sm,
+    borderRadius: vars.space.sm,
+
+    ':hover': {
+      backgroundColor: vars.role.primary.containerHigh,
+    }
+  }],
+});

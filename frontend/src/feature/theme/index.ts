@@ -7,3 +7,4 @@ export * from './color';
 export * from './layout';
 export * from './Provider';
 export * from './util';
+export * from './animation';
