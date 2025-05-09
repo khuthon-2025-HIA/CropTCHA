@@ -19,7 +19,7 @@ import { stagger } from '@/feature/theme';
 import { events } from '@/feature/store/event';
 import { devices } from '@/feature/store/device';
 
-import { Surface } from './component/Surface';
+import { SourcePoint, Surface } from './component/Surface';
 import { EventItem } from './component/EventItem';
 
 import {
@@ -51,6 +51,16 @@ export const HomePage = () => {
       [150, 50],
     ],
   ]);
+  const [source, setSource] = createSignal<SourcePoint[]>([
+    {
+      point: [50, 50],
+      source: {
+        id: '1',
+        type: 'mic',
+        label: '마이크 1',
+      },
+    }
+  ])
 
   const onAddShape = () => {
     setShape([
@@ -146,7 +156,9 @@ export const HomePage = () => {
         <Surface
           mode={mode()}
           shape={shape()}
+          source={source()}
           onShapeChange={setShape}
+          onSourceChange={setSource}
         />
       </section>
       <section

@@ -7,6 +7,7 @@ import type { JSX } from 'solid-js/jsx-runtime';
 
 export type TooltipProps = {
   enabled?: boolean;
+  offset?: number;
   label?: JSX.Element;
   children: JSX.Element;
 };
@@ -42,6 +43,7 @@ export const Tooltip = (props: TooltipProps) => {
   return (
     <Popover
       open={open()}
+      offset={props.offset ?? 4}
       element={
         <div class={containerStyle}>
           {props.label}

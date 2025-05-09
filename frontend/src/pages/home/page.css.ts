@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { vars, animation } from '@/feature/theme';
+import { vars, animation, responsive } from '@/feature/theme';
 
 export const containerStyle = style({
   width: '100%',
@@ -57,6 +57,12 @@ export const sideSectionStyle = style({
   gap: vars.space.md,
 
   flexShrink: 0,
+
+  ...responsive({
+    mobile: {
+      display: 'none',
+    },
+  }),
 });
 
 export const toolbarStyle = style({
