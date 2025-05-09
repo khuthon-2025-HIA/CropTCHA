@@ -12,11 +12,16 @@ import { createClickAway, Popover } from '@/ui/common/Popover';
 
 import { formatDate } from '@/feature/helper';
 import { SoundEvent } from '@/feature/model/event';
+import { createDeviceResource } from '@/feature/api/device.ts';
 
 export type EventItemProps = SoundEvent;
 export const EventItem = (props: EventItemProps) => {
   const [open, setOpen] = createSignal(false);
   const track = createClickAway(() => setOpen(false));
+
+  const [devices] = createDeviceResource();
+
+  const targetDevice = () => devices()?.find((it) => it.id === props.sourceId);
 
   return (
     <Popover
@@ -26,21 +31,21 @@ export const EventItem = (props: EventItemProps) => {
           <Item.Group>
             <Box align={'center'} gap={'xs'} p={'md'}>
               <Text variant={'title'}>
-                {props.data.insect}
+                {props.data[0].type}
               </Text>
               <Text variant={'caption'}>
-                {formatDate(props.timestamp)}
+                {formatDate(new Date(props.timestamp))}
               </Text>
               <Text variant={'caption'}>
-                {`"${props.source.label}"에서 감지되었습니다`}
+                {`"${targetDevice()?.label}"에서 감지되었습니다`}
               </Text>
             </Box>
           </Item.Group>
           <Item.Group>
-            <For each={props.data.others}>
+            <For each={props.data}>
               {(item) => (
                 <Item
-                  name={item.insect}
+                  name={item.type}
                   description={`${(item.value * 100).toFixed(2)}% 확률로 감지됨`}
                 />
               )}
@@ -51,10 +56,10 @@ export const EventItem = (props: EventItemProps) => {
     >
       <Item
         leftIcon={Volume2}
-        name={props.data.insect}
-        description={`"${props.source.label}"에서 감지되었습니다`}
+        name={props.data[0].type}
+        description={`"${targetDevice()?.label}"에서 감지되었습니다`}
         right={
-          <Tooltip label={formatDate(props.timestamp)}>
+          <Tooltip label={formatDate(new Date(props.timestamp))}>
             <Box p={'md'}>
               <Icon icon={Clock}/>
             </Box>

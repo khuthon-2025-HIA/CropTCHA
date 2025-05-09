@@ -38,6 +38,7 @@ import { Dialog } from '@/ui/Dialog';
 import { Device } from '@/feature/model/device';
 import { createShapeResource, createShapeMutation } from '@/feature/api/shape';
 import { createDeviceResource } from '@/feature/api/device';
+import { createEventResource } from '@/feature/api/event.ts';
 
 export const HomePage = () => {
   const [section1, setSection1] = createRef();
@@ -49,6 +50,7 @@ export const HomePage = () => {
 
   const [initShape] = createShapeResource();
   const [devices] = createDeviceResource();
+  const [events] = createEventResource();
   const { mutate } = createShapeMutation();
   const [shape, setShape] = createSignal<[number, number][][]>([]);
   const [source, setSource] = createSignal<SourcePoint[]>([]);
@@ -241,7 +243,7 @@ export const HomePage = () => {
               <Icon icon={ChevronRight} c={'text.caption'} size={12}/>
             </Button>
           </Box>
-          <For each={events.list}>
+          <For each={events()}>
             {(event) => (
               <EventItem
                 {...event}

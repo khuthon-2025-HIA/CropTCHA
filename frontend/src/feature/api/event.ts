@@ -1,12 +1,12 @@
 import { createResource } from 'solid-js';
 
-import { DeviceSchema } from '@/feature/model/device';
+import { SoundEventSchema } from '@/feature/model/event';
 
-export const createDeviceResource = () => createResource(async () => {
-  const response = await fetch('/api/device');
+export const createEventResource = () => createResource(async () => {
+  const response = await fetch('/api/event');
   const json = await response.json();
 
-  return DeviceSchema.array().parse(json);
+  return SoundEventSchema.array().parse(json);
 });
 
 export const createRecordMutation = () => {
@@ -14,7 +14,7 @@ export const createRecordMutation = () => {
     mutate: async (id: string, timestamp: Date, blob: Blob) => {
       const body = new FormData();
       body.append('id', id);
-      body.append('name', timestamp.toISOString());
+      body.append('name', `${timestamp.getTime()}`);
       body.append('file', blob);
 
       await fetch('/api/event/upload', {
