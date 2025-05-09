@@ -1,4 +1,4 @@
-import { createEffect, createSignal } from 'solid-js';
+import { createEffect, createSignal, onMount } from 'solid-js';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 import ZoomIn from 'lucide-solid/icons/zoom-in';
 import ZoomOut from 'lucide-solid/icons/zoom-out';
@@ -26,6 +26,7 @@ import {
   x,
   y
 } from './Surface.css';
+import gsap from 'gsap';
 
 type Point = [number, number];
 type Shape = Point[];
@@ -43,6 +44,11 @@ export type SurfaceProps = {
 }
 export const Surface = (props: SurfaceProps) => {
     const [canvas, setCanvas] = createRef<HTMLCanvasElement>();
+
+    const [zoomText, setZoomText] = createRef();
+    const [zoom1, setZoom1] = createRef();
+    const [zoom2, setZoom2] = createRef();
+    const [zoom3, setZoom3] = createRef();
 
     const [camera, setCamera] = createSignal<Point>([0, 0]);
     const [scale, setScale] = createSignal(1);
@@ -379,6 +385,34 @@ export const Surface = (props: SurfaceProps) => {
       props.onShapeChange?.(newShapes);
     };
 
+    onMount(() => {
+      const tl = gsap.timeline();
+      tl.from(zoom3(), {
+        scale: 0,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power4.out',
+      });
+      tl.from(zoom2(), {
+        scale: 0,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power4.out',
+      }, '-=0.5');
+      tl.from(zoom1(), {
+        scale: 0,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power4.out',
+      }, '-=0.5');
+      tl.from(zoomText(), {
+        x: 16,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power4.out',
+      }, '-=0.5');
+    });
+
     createEffect(() => {
       const cvs = canvas();
       if (!cvs) return;
@@ -497,10 +531,11 @@ export const Surface = (props: SurfaceProps) => {
           onClick={handleClick}
         />
         <div class={fabContainerStyle}>
-          <Text>
+          <Text ref={setZoomText}>
             Zoom: {scale().toFixed(2)}
           </Text>
           <Button
+            ref={setZoom1}
             class={fabStyle}
             onClick={() => {
               zoom(1 / 1.1);
@@ -509,6 +544,7 @@ export const Surface = (props: SurfaceProps) => {
             <Icon icon={ZoomOut}/>
           </Button>
           <Button
+            ref={setZoom2}
             class={fabStyle}
             onClick={() => {
               zoom(1.1);
@@ -517,6 +553,7 @@ export const Surface = (props: SurfaceProps) => {
             <Icon icon={ZoomIn}/>
           </Button>
           <Button
+            ref={setZoom3}
             class={fabStyle}
             onClick={() => {
               setCamera([0, 0]);

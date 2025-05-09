@@ -1,4 +1,4 @@
-import { createSignal, For, getOwner, onCleanup, runWithOwner } from 'solid-js';
+import { createSignal, For, getOwner, onCleanup, onMount, runWithOwner } from 'solid-js';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 import Mic from 'lucide-solid/icons/mic';
 import CloudOff from 'lucide-solid/icons/cloud-off';
@@ -6,6 +6,7 @@ import CloudOff from 'lucide-solid/icons/cloud-off';
 import { Box } from '@/ui/common/Box';
 import { Text } from '@/ui/common/Text';
 import { Button } from '@/ui/common/Button';
+import { Icon } from '@/ui/common/Icon';
 
 import {
   containerStyle,
@@ -15,10 +16,15 @@ import {
   size,
   visualizerStyle
 } from './page.css';
-import { Icon } from '@/ui/common/Icon';
+import { createRef } from '@/feature/hook/createRef';
+import gsap from 'gsap';
 
 const SIZE = 128;
 export const DevicePage = () => {
+  const [ref1, setRef1] = createRef();
+  const [ref2, setRef2] = createRef();
+  const [ref3, setRef3] = createRef();
+
   const [volumeData, setVolumeData] = createSignal<number[]>([]);
 
   const startRecord = async () => {
@@ -75,12 +81,35 @@ export const DevicePage = () => {
     });
   };
 
+  onMount(() => {
+    const tl = gsap.timeline();
+    tl.from(ref1(), {
+      y: 16,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power4.out',
+    });
+    tl.from(ref2(), {
+      y: 16,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power4.out',
+    }, '-=0.5');
+    tl.from(ref3(), {
+      y: 16,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power4.out',
+    }, '-=0.5');
+  });
+
   return (
     <div class={containerStyle}>
-      <Text variant={'title'}>
+      <Text ref={setRef1} variant={'title'}>
         가상 마이크 연결
       </Text>
       <Box
+        ref={setRef2}
         direction={'row'}
         justify={'space-between'}
         align={'flex-end'}
@@ -115,6 +144,7 @@ export const DevicePage = () => {
         </For>
       </Box>
       <Button
+        ref={setRef3}
         onClick={onConnect}
         gap={'xs'}
       >

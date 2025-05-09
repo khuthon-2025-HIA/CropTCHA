@@ -1,4 +1,4 @@
-import { createSignal, For } from 'solid-js';
+import { createSignal, For, onMount } from 'solid-js';
 import Mic from 'lucide-solid/icons/mic';
 import EyeOff from 'lucide-solid/icons/eye-off';
 import LandPlot from 'lucide-solid/icons/land-plot';
@@ -33,8 +33,14 @@ import {
   toolbarButtonStyle,
   toolbarStyle,
 } from './page.css';
+import { createRef } from '@/feature/hook/createRef';
+import gsap from 'gsap';
 
 export const HomePage = () => {
+  const [section1, setSection1] = createRef();
+  const [section2, setSection2] = createRef();
+  const [section3, setSection3] = createRef();
+
   const [mode, setMode] = createSignal<'view' | 'edit'>('view');
 
   const [shape, setShape] = createSignal<[number, number][][]>([
@@ -65,9 +71,31 @@ export const HomePage = () => {
 
   };
 
+  onMount(() => {
+    const tl = gsap.timeline();
+    tl.from(section1(), {
+      y: 16,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power4.out',
+    });
+    tl.from(section2(), {
+      y: 16,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power4.out',
+    }, '-=0.5');
+    tl.from(section3(), {
+      y: 16,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power4.out',
+    }, '-=0.5');
+  });
+
   return (
     <div class={containerStyle}>
-      <section class={mainSectionStyle}>
+      <section ref={setSection1} class={mainSectionStyle}>
         <div class={mainSectionToolbarStyle}>
           <Tooltip label={'편집모드'}>
             <Button
@@ -127,7 +155,7 @@ export const HomePage = () => {
           // [collapsedSideSectionStyle]: collapseSide(),
         }}
       >
-        <Item.Group as={Card} style={{ flex: 1 }}>
+        <Item.Group ref={setSection2} as={Card} style={{ flex: 1 }}>
           <Box class={toolbarStyle} p={'sm'}>
             <Text variant={'caption'}>발생한 이벤트</Text>
             <Button variant={'text'} class={toolbarButtonStyle}>
@@ -145,7 +173,7 @@ export const HomePage = () => {
             )}
           </For>
         </Item.Group>
-        <Card>
+        <Card ref={setSection3}>
           <div class={toolbarStyle}>
             <Text variant={'caption'}>연결된 센서</Text>
             <Button variant={'text'} class={toolbarButtonStyle}>

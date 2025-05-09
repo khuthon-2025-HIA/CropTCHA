@@ -24,17 +24,20 @@ export const MainPage = () => {
       y: 16,
       opacity: 0,
       duration: 0.6,
+      ease: 'power4.out',
     });
     tl.from(button1(), {
       y: 16,
       opacity: 0,
       duration: 0.6,
-    }, '-=0.4');
+      ease: 'power4.out',
+    }, '-=0.5');
     tl.from(button2(), {
       y: 16,
       opacity: 0,
       duration: 0.6,
-    }, '-=0.4');
+      ease: 'power4.out',
+    }, '-=0.5');
   });
 
   return (
