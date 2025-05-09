@@ -31,10 +31,10 @@ export const HomePage = () => {
 
   const [shape, setShape] = createSignal<[number, number][][]>([
     [
-      [10, 10],
-      [30, 100],
-      [100, 100],
-      [100, 30],
+      [50, 50],
+      [50, 150],
+      [150, 150],
+      [150, 50],
     ],
   ]);
 
