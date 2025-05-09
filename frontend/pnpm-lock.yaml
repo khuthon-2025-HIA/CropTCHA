@@ -29,6 +29,9 @@ importers:
       '@vanilla-extract/sprinkles':
         specifier: 1.6.3
         version: 1.6.3(@vanilla-extract/css@1.17.1)
+      gsap:
+        specifier: 3.13.0
+        version: 3.13.0
       lucide-solid:
         specifier: 0.503.0
         version: 0.503.0(solid-js@1.9.6)
@@ -628,6 +631,9 @@ packages:
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
     engines: {node: '>=4'}
+
+  gsap@3.13.0:
+    resolution: {integrity: sha512-QL7MJ2WMjm1PHWsoFrAQH/J8wUeqZvMtHO58qdekHpCfhvhSL4gSiz6vJf5EeMP0LOn3ZCprL2ki/gjED8ghVw==}
 
   html-entities@2.3.3:
     resolution: {integrity: sha512-DV5Ln36z34NNTDgnz0EWGBLZENelNAtkiFA4kyNOG2tDI6Mz1uSWiq1wAKdyjnJwyDiDO7Fa2SO1CTxPXL8VxA==}
@@ -1406,6 +1412,8 @@ snapshots:
   gensync@1.0.0-beta.2: {}
 
   globals@11.12.0: {}
+
+  gsap@3.13.0: {}
 
   html-entities@2.3.3: {}
 
